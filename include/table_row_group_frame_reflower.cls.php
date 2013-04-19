@@ -1,10 +1,9 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -19,7 +18,7 @@ class Table_Row_Group_Frame_Reflower extends Frame_Reflower {
     parent::__construct($frame);
   }
 
-  function reflow(Frame_Decorator $block = null) {
+  function reflow(Block_Frame_Decorator $block = null) {
     $page = $this->_frame->get_root();
 
     $style = $this->_frame->get_style();

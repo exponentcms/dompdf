@@ -1,12 +1,11 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Helmut Tischer <htischer@weihenstephan.org>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -31,6 +30,9 @@ class Text_Renderer extends Abstract_Renderer {
     
   //........................................................................
 
+  /**
+   * @param Text_Frame_Decorator $frame
+   */
   function render(Frame $frame) {
     $text = $frame->get_text();
     if ( trim($text) === "" )
@@ -53,7 +55,7 @@ class Text_Renderer extends Abstract_Renderer {
 
     $font = $style->font_family;
     $size = $frame_font_size = $style->font_size;
-    $height = $style->height;    
+    $height = $style->height;
     $word_spacing = $frame->get_text_spacing() + $style->length_in_pt($style->word_spacing);
     $char_spacing = $style->length_in_pt($style->letter_spacing);
     $width = $style->width;
@@ -85,7 +87,7 @@ class Text_Renderer extends Abstract_Renderer {
     $linethrough_offset  = $size * self::LINETHROUGH_OFFSET;
     $underline_position  = -0.08;
     
-    if ( method_exists( $this->_canvas, "get_cpdf" ) ) {
+    if ( $this->_canvas instanceof CPDF_Adapter ) {
       $cpdf_font = $this->_canvas->get_cpdf()->fonts[$style->font_family];
       
       if (isset($cpdf_font["UnderlinePosition"])) {

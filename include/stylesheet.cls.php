@@ -1,12 +1,11 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Helmut Tischer <htischer@weihenstephan.org>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -35,18 +34,21 @@ class Stylesheet {
   
   /**
    * User agent stylesheet origin
+   *
    * @var int
    */
   const ORIG_UA = 1;
   
   /**
    * User normal stylesheet origin
+   *
    * @var int
    */
   const ORIG_USER = 2;
   
   /**
    * Author normal stylesheet origin
+   *
    * @var int
    */
   const ORIG_AUTHOR = 3;
@@ -59,19 +61,22 @@ class Stylesheet {
 
   /**
    * Current dompdf instance
+   *
    * @var DOMPDF
    */
   private $_dompdf;
   
   /**
    * Array of currently defined styles
-   * @var array
+   *
+   * @var Style[]
    */
   private $_styles;
 
   /**
    * Base protocol of the document being parsed
    * Used to handle relative urls.
+   *
    * @var string
    */
   private $_protocol;
@@ -79,6 +84,7 @@ class Stylesheet {
   /**
    * Base hostname of the document being parsed
    * Used to handle relative urls.
+   *
    * @var string
    */
   private $_base_host;
@@ -86,22 +92,30 @@ class Stylesheet {
   /**
    * Base path of the document being parsed
    * Used to handle relative urls.
+   *
    * @var string
    */
   private $_base_path;
 
   /**
    * The styles defined by @page rules
+   *
    * @var array<Style>
    */
   private $_page_styles;
 
   /**
    * List of loaded files, used to prevent recursion
+   *
    * @var array
    */
   private $_loaded_files;
-  
+
+  /**
+   * Current stylesheet origin
+   *
+   * @var int
+   */
   private $_current_origin = self::ORIG_UA;
 
   /**
@@ -144,9 +158,9 @@ class Stylesheet {
   /**
    * Set the base protocol
    *
-   * @param string $proto
+   * @param string $protocol
    */
-  function set_protocol($proto) { $this->_protocol = $proto; }
+  function set_protocol($protocol) { $this->_protocol = $protocol; }
 
   /**
    * Set the base host
@@ -193,18 +207,19 @@ class Stylesheet {
   /**
    * Return the array of page styles
    *
-   * @return array<Style>
+   * @return Style[]
    */
   function get_page_styles() { return $this->_page_styles; }
 
   /**
    * Add a new Style object to the stylesheet
-   *
    * add_style() adds a new Style object to the current stylesheet, or
    * merges a new Style with an existing one.
    *
-   * @param string $key   the Style's selector
-   * @param Style $style  the Style to be added
+   * @param string $key    the Style's selector
+   * @param Style  $style  the Style to be added
+   *
+   * @throws DOMPDF_Exception
    */
   function add_style($key, Style $style) {
     if ( !is_string($key) ) {
@@ -260,10 +275,9 @@ class Stylesheet {
    * load and parse a CSS file
    *
    * @param string $file
+   * @param int    $origin
    */
   function load_css_file($file, $origin = self::ORIG_AUTHOR) {
-    global $_dompdf_warnings;
-    
     if ( $origin ) {
       $this->_current_origin = $origin;
     }
@@ -319,17 +333,15 @@ class Stylesheet {
 
   /**
    * @link http://www.w3.org/TR/CSS21/cascade.html#specificity
-   * 
-   * 
    *
-   * @param string $selector
-   * @param string $origin : 
+   * @param string     $selector
+   * @param int $origin :
    *    - ua: user agent style sheets
    *    - un: user normal style sheets
    *    - an: author normal style sheets
    *    - ai: author important style sheets
    *    - ui: user important style sheets
-   *    
+   *
    * @return int
    */
   private function _specificity($selector, $origin = self::ORIG_AUTHOR) {
@@ -368,9 +380,12 @@ class Stylesheet {
   }
 
   /**
-   * converts a CSS selector to an XPath query.
+   * Converts a CSS selector to an XPath query.
    *
    * @param string $selector
+   * @param bool   $first_pass
+   *
+   * @throws DOMPDF_Exception
    * @return string
    */
   private function _css_selector_to_xpath($selector, $first_pass = false) {
@@ -533,8 +548,6 @@ class Stylesheet {
         case "nth-child":
           $p = $i+1;
           $nth = trim(mb_substr($selector, $p, strpos($selector, ")", $i)-$p));
-          
-          $condition = "";
           
           // 1
           if ( preg_match("/^\d+$/", $nth) ) {
@@ -810,7 +823,7 @@ class Stylesheet {
         continue;
       }
       
-      foreach ($nodes as $i => $node) {
+      foreach ($nodes as $node) {
         foreach ($query["pseudo_elements"] as $pos) {
           // Do not add a new pseudo element if another one already matched
           if ( $node->hasAttribute("dompdf_{$pos}_frame_id") ) {
@@ -977,13 +990,13 @@ class Stylesheet {
 
   }
 
-
   /**
    * parse a CSS string using a regex parser
-   *
    * Called by {@link Stylesheet::parse_css()}
    *
    * @param string $str
+   *
+   * @throws DOMPDF_Exception
    */
   private function _parse_css($str) {
 
@@ -1042,13 +1055,7 @@ class Stylesheet {
 
         case "media":
           $acceptedmedia = self::$ACCEPTED_GENERIC_MEDIA_TYPES;
-          
-          if ( defined("DOMPDF_DEFAULT_MEDIA_TYPE") ) {
-            $acceptedmedia[] = DOMPDF_DEFAULT_MEDIA_TYPE;
-          } 
-          else {
-            $acceptedmedia[] = self::$ACCEPTED_DEFAULT_MEDIA_TYPE;
-          }
+          $acceptedmedia[] = $this->_dompdf->get_option("default_media_type");
           
           $media = preg_split("/\s*,\s*/", mb_strtolower(trim($match[3])));
           
@@ -1079,7 +1086,8 @@ class Stylesheet {
 
           // If the page has a name, skip the style.
           $page_selector = trim($match[3]);
-          
+
+          $key = null;
           switch($page_selector) {
             case "": 
               $key = "base"; 
@@ -1126,7 +1134,8 @@ class Stylesheet {
   /* See also style.cls Style::_image(), refactoring?, works also for imported css files */
   protected function _image($val) {
     $DEBUGCSS=DEBUGCSS;
-    
+    $parsed_url = "none";
+
     if ( mb_strpos($val, "url") === false ) {
       $path = "none"; //Don't resolve no image -> otherwise would prefix path and no longer recognize as none
     }
@@ -1179,13 +1188,7 @@ class Stylesheet {
 
     if ( count($arr) > 0 ) {
       $acceptedmedia = self::$ACCEPTED_GENERIC_MEDIA_TYPES;
-      
-      if ( defined("DOMPDF_DEFAULT_MEDIA_TYPE") ) {
-        $acceptedmedia[] = DOMPDF_DEFAULT_MEDIA_TYPE;
-      }
-      else {
-        $acceptedmedia[] = self::$ACCEPTED_DEFAULT_MEDIA_TYPE;
-      }
+      $acceptedmedia[] = $this->_dompdf->get_option("default_media_type");
               
       // @import url media_type [media_type...]
       foreach ( $arr as $type ) {

@@ -1,10 +1,9 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -39,6 +38,13 @@ abstract class Frame_Reflower {
 
   function dispose() {
     clear_object($this);
+  }
+
+  /**
+   * @return DOMPDF
+   */
+  function get_dompdf() {
+    return $this->_frame->get_dompdf();
   }
 
   /**
@@ -116,7 +122,7 @@ abstract class Frame_Reflower {
 
   //........................................................................
 
-  abstract function reflow(Frame_Decorator $block = null);
+  abstract function reflow(Block_Frame_Decorator $block = null);
 
   //........................................................................
 
@@ -236,7 +242,7 @@ abstract class Frame_Reflower {
   /**
    * Parses a CSS "quotes" property
    * 
-   * @return array An array of pairs of quotes
+   * @return array|null An array of pairs of quotes
    */
   protected function _parse_quotes() {
     
@@ -247,7 +253,7 @@ abstract class Frame_Reflower {
       
     // split on spaces, except within quotes
     if ( !preg_match_all($re, "$quotes", $matches, PREG_SET_ORDER) ) {
-      return;
+      return null;
     }
       
     $quotes_array = array();
@@ -265,7 +271,7 @@ abstract class Frame_Reflower {
   /**
    * Parses the CSS "content" property
    * 
-   * @return string The resulting string
+   * @return string|null The resulting string
    */
   protected function _parse_content() {
 
@@ -285,7 +291,7 @@ abstract class Frame_Reflower {
     
     // split on spaces, except within quotes
     if ( !preg_match_all($re, $content, $matches, PREG_SET_ORDER) ) {
-      return;
+      return null;
     }
       
     $text = "";

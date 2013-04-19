@@ -1,11 +1,10 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -20,13 +19,15 @@ class Image_Frame_Reflower extends Frame_Reflower {
     parent::__construct($frame);
   }
 
-  function reflow(Frame_Decorator $block = null) {
+  function reflow(Block_Frame_Decorator $block = null) {
     $this->_frame->position();
     
     //FLOAT
     //$frame = $this->_frame;
     //$page = $frame->get_root();
-    //if (DOMPDF_ENABLE_CSS_FLOAT && $frame->get_style()->float !== "none" ) {
+
+    //$enable_css_float = $this->get_dompdf()->get_option("enable_css_float");
+    //if ($enable_css_float && $frame->get_style()->float !== "none" ) {
     //  $page->add_floating_frame($this);
     //}
     // Set the frame's width
@@ -109,8 +110,9 @@ class Image_Frame_Reflower extends Frame_Reflower {
       // Resample according to px per inch
       // See also List_Bullet_Image_Frame_Decorator::__construct
       if ($width == 0 && $height == 0) {
-        $width = (float)($img_width * 72) / DOMPDF_DPI;
-        $height = (float)($img_height * 72) / DOMPDF_DPI;
+        $dpi = $this->_frame->get_dompdf()->get_option("dpi");
+        $width = (float)($img_width * 72) / $dpi;
+        $height = (float)($img_height * 72) / $dpi;
         $width_forced = false;
         $height_forced = false;
       } elseif ($height == 0 && $width != 0) {
@@ -128,7 +130,7 @@ class Image_Frame_Reflower extends Frame_Reflower {
          $style->min_height !== "none" || 
          $style->max_height !== "none" ) {
            
-      list($x, $y, $w, $h) = $this->_frame->get_containing_block();
+      list(/*$x*/, /*$y*/, $w, $h) = $this->_frame->get_containing_block();
       
       $min_width = $style->length_in_pt($style->min_width, $w);
       $max_width = $style->length_in_pt($style->max_width, $w);

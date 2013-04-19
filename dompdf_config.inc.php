@@ -1,12 +1,11 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Helmut Tischer <htischer@weihenstephan.org>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 //error_reporting(E_STRICT | E_ALL | E_DEPRECATED);
@@ -316,6 +315,13 @@ def("DOMPDF_FONT_HEIGHT_RATIO", 1.1);
 def("DOMPDF_ENABLE_CSS_FLOAT", false);
 
 /**
+ * Enable the built in DOMPDF autoloader
+ *
+ * @var bool
+ */
+def("DOMPDF_ENABLE_AUTOLOAD", true);
+
+/**
  * Prepend the DOMPDF autoload function the spl_autoload stack
  *
  * @var bool
@@ -330,7 +336,13 @@ require_once(DOMPDF_LIB_DIR . "/html5lib/Parser.php");
 
 // ### End of user-configurable options ###
 
-require_once(DOMPDF_INC_DIR . "/autoload.inc.php");
+/**
+ * Load autoloader
+ */
+if (DOMPDF_ENABLE_AUTOLOAD) {
+  require_once(DOMPDF_INC_DIR . "/autoload.inc.php");
+  require_once(DOMPDF_LIB_DIR . "/php-font-lib/classes/font.cls.php");
+}
 
 /**
  * Ensure that PHP is working with text internally using UTF8 character encoding.

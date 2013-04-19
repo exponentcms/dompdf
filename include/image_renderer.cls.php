@@ -1,11 +1,10 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -81,6 +80,7 @@ class Image_Renderer extends Block_Renderer {
     }
     
     $src = $frame->get_image_url();
+    $alt = null;
 
     if ( Image_Cache::is_broken($src) &&
       $alt = $frame->get_node()->getAttribute("alt") ) {

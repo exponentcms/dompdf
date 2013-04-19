@@ -10,7 +10,7 @@ if ( $dompdf == '/' || $dompdf == '\\') {
   $dompdf = '';
 }
 
-$dompdf .= "/dompdf.php?base_path=" . rawurlencode("www/");
+$dompdf .= "/dompdf.php?base_path=" . rawurlencode("www/test/");
 
 include "head.inc"; 
 
@@ -35,7 +35,7 @@ function getPath(hash) {
   switch(type) {
     default:
     case "html": 
-      return file;
+      return "test/"+file;
     case "pdf":
       return "<?php echo $dompdf; ?>&options[Attachment]=0&input_file="+file+"#toolbar=0&view=FitH&statusbar=0&messages=0&navpanes=0";
   }
@@ -80,7 +80,15 @@ if ( DOMPDF_ENABLE_PHP ) {
   $extensions[] = "php";
 }
 
-$test_files = glob("test/*.{".implode(",", $extensions)."}", GLOB_BRACE);
+// To be compatible with non-GNU systems
+if (!defined("GLOB_BRACE")) {
+  $test_files = glob("test/*");
+  $test_files = preg_grep("/(" . implode("|",$extensions) . ")/i", $test_files);
+}
+else {
+  $test_files = glob("test/*.{".implode(",", $extensions)."}", GLOB_BRACE);
+}
+
 $sections = array(
   "print"    => array(), 
   "css"      => array(), 
@@ -110,12 +118,12 @@ foreach ( $sections as $section => $files ) {
   
   echo "<ul class=\"samples\">";
   foreach ( $files as $file ) {
-    $filename = "test/".basename($file[0]);
+    $filename = basename($file[0]);
     $title = $file[1];
     $arrow = "images/arrow_0" . rand(1, 6) . ".gif";  
     echo "<li style=\"list-style-image: url('$arrow');\">\n";
     echo " 
-  [<a class=\"button\" target=\"preview\" onclick=\"setHash('$filename,html')\" href=\"$filename\">HTML</a>] 
+  [<a class=\"button\" target=\"preview\" onclick=\"setHash('$filename,html')\" href=\"test/$filename\">HTML</a>] 
   [<a class=\"button\" target=\"preview\" onclick=\"setHash('$filename,pdf')\" href=\"$dompdf&amp;options[Attachment]=0&amp;input_file=" . rawurlencode($filename) . "#toolbar=0&amp;view=FitH&amp;statusbar=0&amp;messages=0&amp;navpanes=0\">PDF</a>] ";
     echo $title;
     echo "</li>\n";

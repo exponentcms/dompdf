@@ -1,10 +1,9 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -35,13 +34,16 @@ class Frame_Factory {
   }
 
   /**
-   * Decorate a Frame 
-   * 
-   * @param $root Frame The frame to decorate
-   * @param $dompdf DOMPDF The dompdf instance
+   * Decorate a Frame
+   *
+   * @param Frame  $frame  The frame to decorate
+   * @param DOMPDF $dompdf The dompdf instance
+   * @param Frame  $root   The frame to decorate
+   *
+   * @throws DOMPDF_Exception
    * @return Frame_Decorator
    * FIXME: this is admittedly a little smelly...
-   */ 
+   */
   static function decorate_frame(Frame $frame, DOMPDF $dompdf, Frame $root = null) {
     if ( is_null($dompdf) ) {
       throw new DOMPDF_Exception("The DOMPDF argument is required");
@@ -78,7 +80,8 @@ class Frame_Factory {
         $reflower = "Text";
       } 
       else {
-        if ( DOMPDF_ENABLE_CSS_FLOAT && $style->float !== "none" ) {
+        $enable_css_float = $dompdf->get_option("enable_css_float");
+        if ( $enable_css_float && $style->float !== "none" ) {
           $decorator = "Block";
           $reflower = "Block";
         }
@@ -160,6 +163,12 @@ class Frame_Factory {
     default:
       // FIXME: should throw some sort of warning or something?
     case "none":
+      if ( $style->_dompdf_keep !== "yes" ) {
+        // Remove the node and the frame
+        $frame->get_parent()->remove_child($frame);
+        return;
+      }
+
       $positioner = "Null";
       $decorator = "Null";
       $reflower = "Null";
@@ -228,8 +237,6 @@ class Frame_Factory {
         
         $parent_node->setAttribute("dompdf-counter", $index);
         $bullet_node->setAttribute("dompdf-counter", $index);
-        
-        $index++;
       }
       
       $new_style = $dompdf->get_css()->create_style();

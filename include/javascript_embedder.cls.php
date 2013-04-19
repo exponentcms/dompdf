@@ -1,10 +1,9 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -24,13 +23,14 @@ class Javascript_Embedder {
     $this->_dompdf = $dompdf;
   }
 
-  function insert($code) {
-    $this->_dompdf->get_canvas()->javascript($code);
+  function insert($script) {
+    $this->_dompdf->get_canvas()->javascript($script);
   }
 
-  function render($frame) {
-    if ( !DOMPDF_ENABLE_JAVASCRIPT )
+  function render(Frame $frame) {
+    if ( !$this->_dompdf->get_option("enable_javascript") ) {
       return;
+    }
       
     $this->insert($frame->get_node()->nodeValue);
   }

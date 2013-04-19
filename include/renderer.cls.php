@@ -1,10 +1,9 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -21,7 +20,7 @@ class Renderer extends Abstract_Renderer {
   /**
    * Array of renderers for specific frame types
    *
-   * @var array
+   * @var Abstract_Renderer[]
    */
   protected $_renderers;
     
@@ -70,7 +69,7 @@ class Renderer extends Abstract_Renderer {
     // Starts the CSS transformation
     if ( $style->transform && is_array($style->transform) ) {
       $this->_canvas->save();
-      list($x, $y, $w, $h) = $frame->get_padding_box();
+      list($x, $y) = $frame->get_padding_box();
       $origin = $style->transform_origin;
       
       foreach($style->transform as $transform) {
