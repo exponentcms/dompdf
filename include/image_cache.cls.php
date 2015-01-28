@@ -53,7 +53,6 @@ class Image_Cache {
         $host = HOSTNAME;
         $url = URL_BASE.$url;
     }
-
     $remote = ($protocol && $protocol !== "file://") || ($parsed_url['protocol'] != "");
     
     $data_uri = strpos($parsed_url['protocol'], "data:") === 0;

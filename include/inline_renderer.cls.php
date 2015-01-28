@@ -183,8 +183,8 @@ class Inline_Renderer extends Abstract_Renderer {
     
     // Handle anchors & links
     if ( $link_node ) {
-        if ( $href = $link_node->getAttribute("href") &&  !DOMPDF_DISABLE_LINKS)
-            $this->_canvas->add_link($href, $x, $y, $w, $h);
+      if ( $href = $link_node->getAttribute("href") &&  !DOMPDF_DISABLE_LINKS )
+        $this->_canvas->add_link($href, $x, $y, $w, $h);
     }
   }
 }
