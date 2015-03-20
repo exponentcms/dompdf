@@ -26,6 +26,22 @@
 //define("DOMPDF_ENABLE_HTML5PARSER", true);
 //define("DOMPDF_ENABLE_FONTSUBSETTING", true);
 
-// DOMPDF authentication
+// authentication
 define("DOMPDF_ADMIN_USERNAME", "user");
 define("DOMPDF_ADMIN_PASSWORD", "user");
+// font cache
+define("DOMPDF_FONT_CACHE", DOMPDF_DIR . '/../../tmp/ttfontdata/');
+// our preferences
+define("DOMPDF_ENABLE_JAVASCRIPT", false);
+define("DOMPDF_ENABLE_REMOTE", true);
+// help bad html structures
+define("DOMPDF_ENABLE_HTML5PARSER", true);
+
+/**
+ * Disable link creation
+ *
+ * If this setting is set to true, DOMPDF will not embed active links
+ *
+ * @var bool
+ */
+define("DOMPDF_DISABLE_LINKS", true);

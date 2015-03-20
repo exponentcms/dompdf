@@ -262,7 +262,7 @@ def("DOMPDF_ENABLE_PHP", false);
  *
  * @var bool
  */
-def("DOMPDF_ENABLE_JAVASCRIPT", false);
+def("DOMPDF_ENABLE_JAVASCRIPT", true);
 
 /**
  * Enable remote file access
@@ -281,16 +281,7 @@ def("DOMPDF_ENABLE_JAVASCRIPT", false);
  *
  * @var bool
  */
-def("DOMPDF_ENABLE_REMOTE", true);
-
-/**
- * Disable link creation
- *
- * If this setting is set to true, DOMPDF will not embed active links
- *
- * @var bool
- */
-def("DOMPDF_DISABLE_LINKS", true);
+def("DOMPDF_ENABLE_REMOTE", false);
 
 /**
  * The debug output log
